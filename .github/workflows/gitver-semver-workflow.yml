@@ -95,6 +95,6 @@ jobs:
         run: |
           echo "==========================Create and push Git tag==========================================="
           cd ${{ github.workspace }}
-          git tag v${{ env.GitVersion_SemVer }}
-          git push origin v${{ env.GitVersion_SemVer }}
+          git tag v${{ env.GitVersion_MajorMinorPatch }}
+          git push origin v${{ env.GitVersion_MajorMinorPatch }}
         if: (success() && (github.event_name == 'push') && ((github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/dev')))
