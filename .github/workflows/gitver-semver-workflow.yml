@@ -36,6 +36,11 @@ jobs:
           echo "LOG semver-git-version action path ${{ github.action_path }}/GitVersion.yml"
           echo "LOG semver-git-version repo_name --- ${{ env.repo_name }}"
 
+      - uses: actions/checkout@v4.1.2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
       - name: Install DotNet
         uses: actions/setup-dotnet@v3
         id: install_dotnet
