@@ -1,6 +1,6 @@
 branches:
   develop:
-    mode: ContinousDelivery
+    mode: ContinuousDelivery
     tag: alpha
     increment: Minor
     prevent-increment-of-merged-branch-version: false
