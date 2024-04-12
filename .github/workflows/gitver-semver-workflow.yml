@@ -97,4 +97,4 @@ jobs:
           cd ${{ github.workspace }}
           git tag v${{ env.GitVersion_SemVer }}
           git push origin v${{ env.GitVersion_SemVer }}
-        if: (success() && (github.event_name == 'push') && ((github.ref == 'refs/heads/mainxx') || (github.ref == 'refs/heads/devxx')))
+        if: (success() && (github.event_name == 'push') && ((github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/dev')))
