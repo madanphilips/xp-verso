@@ -7,7 +7,7 @@ branches:
     track-merge-target: true
     regex: ^dev(elop)?(ment)?$
     source-branches: []
-    tracks-release-branches: true
+    tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
     pre-release-weight: 0
