@@ -5,13 +5,13 @@ on:
     branches:
       - main
       - dev
-      - releases/**
+      - 'release/**'
   pull_request:
     types: [edited, opened, synchronize, reopened]
     branches:
       - main
       - dev
-      - releases/**
+      - 'release/**'
   workflow_dispatch:
 
 jobs:
