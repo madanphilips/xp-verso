@@ -1,0 +1,95 @@
+name: Gitver semver workflow
+
+on:
+  push:
+    branches:
+      - mainxx
+      - devxx
+  pull_request:
+    types: [edited, opened, synchronize, reopened]
+    branches:
+      - mainxx
+      - devxx
+  workflow_dispatch:
+
+jobs:
+  gitver_semver_workflow:
+    runs-on: [ubuntu-latest]
+
+    permissions: write-all
+
+    steps:
+      - name: Set env variables
+        shell: bash
+        run: |
+          echo "repo_name=${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/}" >> "$GITHUB_ENV"        
+
+      - name: Printing logs
+        shell: bash
+        run: |
+          echo "==================================Printing logs================================="
+          echo "LOG semver-git-version github.ref --- ${{ github.ref }}"
+          echo "LOG semver-git-version github.ref_name --- ${{ github.ref_name }}"
+          echo "LOG semver-git-version github.head_ref --- ${{ github.head_ref }}"
+          echo "LOG semver-git-version github.base_ref --- ${{ github.base_ref }}"
+          echo "LOG semver-git-version github.event_name --- ${{ github.event_name }}"
+          echo "LOG semver-git-version action path ${{ github.action_path }}/GitVersion.yml"
+          echo "LOG semver-git-version repo_name --- ${{ env.repo_name }}"
+
+      - name: Install DotNet
+        uses: actions/setup-dotnet@v3
+        id: install_dotnet
+        with:
+          dotnet-version: 6.x
+
+      - name: Verify DotNet version
+        id: verify_dotnet
+        shell: bash
+        run: echo 'DotNet version is ${{ steps.install_dotnet.outputs.dotnet-version }}'
+
+      - name: Source Folder Contents
+        id: source_folder
+        shell: bash
+        run: |
+          echo "=====================================display content of source folder====================================="
+          echo "source folder: ${GITHUB_WORKSPACE}"
+          ls ${GITHUB_WORKSPACE}
+
+      - name: Install GitVersion
+        id: install_git_version
+        uses: gittools/actions/gitversion/setup@v1.1.1
+        with:
+          versionSpec: '5.x'
+
+      - name: Determine Version
+        id: determine_git_version
+        uses: gittools/actions/gitversion/execute@v1.1.1
+        with:
+          targetPath: ${{ github.workspace }}
+          useConfigFile: false
+
+      - name: Define Variables
+        id: define_variables
+        shell: bash
+        run: |
+          echo "===================================================================================================="
+          echo "GitVersion configuration for branches"
+          echo "===================================================================================================="
+          /opt/hostedtoolcache/GitVersion.Tool/5.12.0/x64/dotnet-gitversion ${{ github.workspace }} /showconfig
+          echo "=====================================Define Variables==============================================="
+          echo "SemVer variable is: ${{ env.GitVersion_SemVer }}"
+          echo "FullSemVer variable is: ${{ env.GitVersion_FullSemVer }}"
+          MajorMinorPatch=$(/opt/hostedtoolcache/GitVersion.Tool/5.12.0/x64/dotnet-gitversion ${{ github.workspace }} /output json /showvariable MajorMinorPatch)
+          echo "MajorMinorPatch variable is: $MajorMinorPatch"      
+          echo "===================================================================================================="
+
+
+      - name: Git tag
+        id: git_tag_create
+        shell: bash
+        run: |
+          echo "==========================Create and push Git tag==========================================="
+          cd ${{ github.workspace }}
+          git tag v${{ env.GitVersion_SemVer }}
+          git push origin v${{ env.GitVersion_SemVer }}
+        if: (success() && (github.event_name == 'push') && ((github.ref == 'refs/heads/mainxx') || (github.ref == 'refs/heads/devxx')))
