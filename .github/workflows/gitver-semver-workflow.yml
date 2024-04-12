@@ -3,13 +3,13 @@ name: Gitver semver workflow
 on:
   push:
     branches:
-      - mainxx
-      - devxx
+      - main
+      - dev
   pull_request:
     types: [edited, opened, synchronize, reopened]
     branches:
-      - mainxx
-      - devxx
+      - main
+      - dev
   workflow_dispatch:
 
 jobs:
